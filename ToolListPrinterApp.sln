@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.32002.261
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToolListPrinterUI", "ToolListPrinterUI\ToolListPrinterUI.csproj", "{6A8EA80E-0791-4315-A7E3-B60AEEE5E30E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToolListPrinterLibrary", "ToolListPrinterLibrary\ToolListPrinterLibrary.csproj", "{34DD2C31-EDB3-4FFF-97E9-E68398A994AF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6A8EA80E-0791-4315-A7E3-B60AEEE5E30E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A8EA80E-0791-4315-A7E3-B60AEEE5E30E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A8EA80E-0791-4315-A7E3-B60AEEE5E30E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A8EA80E-0791-4315-A7E3-B60AEEE5E30E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{34DD2C31-EDB3-4FFF-97E9-E68398A994AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34DD2C31-EDB3-4FFF-97E9-E68398A994AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34DD2C31-EDB3-4FFF-97E9-E68398A994AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34DD2C31-EDB3-4FFF-97E9-E68398A994AF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {77B2967D-FA3B-4896-B613-2DC6DF6E06E9}
+	EndGlobalSection
+EndGlobal
