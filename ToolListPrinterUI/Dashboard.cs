@@ -24,13 +24,21 @@ namespace ToolListPrinterUI
         private void CreateAndOpenFileButton_Click(object sender, EventArgs e)
         {
             // Create model
-            // PartModel model = TDMProcessing.CreatePartModel(partNumberTextBox.Text);
-            PartModel model = new() { PartName = "Trial", ToolLists = new() { new() { ToolListName = "556451_555", ListPositions = new() { new() { CompId = "55050", Description = "FAA", OrderCode = "070-555" } } } } };
+            if (string.IsNullOrWhiteSpace(partNumberTextBox.Text))
+            {
+                MessageBox.Show("Pole nie może być puste!", "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            PartModel model = TDMProcessing.CreatePartModel(partNumberTextBox.Text);
             // Create file
+            if (model.ToolLists.Count == 0)
+            {
+                MessageBox.Show($"Nie znaleziono list narzędziowych dla programu {model.PartName}!", "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
             string filePath = ExcelProcessing.CreateExcelFileFromModel(model);
             // Open file
-            ExcelProcessing.OpenFileInExcel(@filePath);
-            //Process.Start(filePath);
+            ExcelProcessing.OpenFileInExcel(filePath);
         }
     }
 }

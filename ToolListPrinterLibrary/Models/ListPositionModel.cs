@@ -19,5 +19,6 @@
 }
         public string Description { get; set; }
         public string OrderCode { get; set; }
+        public bool IsPresent { get; set; }
     }
 }

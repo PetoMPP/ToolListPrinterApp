@@ -24,7 +24,7 @@ namespace ToolListPrinterLibrary.DataProcessing
             using IDbConnection connection = GetTDMConnection();
             // Collect tool lists
             model.ToolLists = connection.Query<ToolListModel>(
-                $"SELECT LISTID AS ListId, NCPROGRAM AS ToolListName FROM TDM_LIST WHERE NCPROGRAM LIKE '{partName}%'",
+                $"SELECT LISTID AS ToolListId, NCPROGRAM AS ToolListName, MACHINEID AS MachineId FROM TDM_LIST WHERE NCPROGRAM LIKE '{partName}%' ORDER BY ToolListName",
                 commandType: CommandType.Text).ToList();
             // Collect positions
             foreach (ToolListModel list in model.ToolLists)
@@ -38,16 +38,30 @@ namespace ToolListPrinterLibrary.DataProcessing
                     if (position.Name == position.CompId)
                     {
                         // populate data from comps table
-                        string[] compData = connection.Query<string[]>($"SELECT NAME, NAME2 FROM TDM_COMP WHERE COMPID = '{position.CompId}'").First();
-                        position.Description = compData[0];
-                        position.OrderCode = compData[1];
+                        //List<string> compData = connection.Query<string>($"SELECT NAME, NAME2 FROM TDM_COMP WHERE COMPID = '{position.CompId}'").ToList();
+                        position.Description = connection.Query<string>($"SELECT NAME FROM TDM_COMP WHERE COMPID = '{position.CompId}'").First();
+                        position.OrderCode = connection.Query<string>($"SELECT NAME2 FROM TDM_COMP WHERE COMPID = '{position.CompId}'").First();
+                        position.IsPresent = connection.Query<bool>(
+$@"IF EXISTS (SELECT COMPID FROM LGM_COMPSTOCKBASELIST
+WHERE COMPID = '{position.Name}' AND COSTUNIT = '{list.MachineId}')
+SELECT 1
+ELSE
+SELECT 0",
+                        commandType: CommandType.Text).First();
                     }
                     if (position.Name == position.ToolId)
                     {
                         // populate data from tools table
-                        string[] compData = connection.Query<string[]>($"SELECT NAME, NAME2 FROM TDM_TOOL WHERE TOOLID = '{position.CompId}'").First();
-                        position.Description = compData[0];
-                        position.OrderCode = compData[1];
+                        // List<string> compData = connection.Query<string>($"SELECT NAME, NAME2 FROM TDM_TOOL WHERE TOOLID = '{position.CompId}'").ToList();
+                        position.Description = connection.Query<string>($"SELECT NAME FROM TDM_TOOL WHERE TOOLID = '{position.ToolId}'").First();
+                        position.OrderCode = connection.Query<string>($"SELECT NAME2 FROM TDM_TOOL WHERE TOOLID = '{position.ToolId}'").First();
+                        position.IsPresent = connection.Query<bool>(
+$@"IF EXISTS (SELECT TOOLID FROM LGM_TOOLSTOCKBASELIST
+WHERE TOOLID = '{position.Name}' AND COSTUNIT = '{list.MachineId}')
+SELECT 1
+ELSE
+SELECT 0",
+                        commandType: CommandType.Text).First();
                     }
                 }
             }

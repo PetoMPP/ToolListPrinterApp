@@ -27,6 +27,7 @@ namespace ToolListPrinterLibrary.DataProcessing
         private const int RegularFontSize = 11;
         private static readonly Color RegularFontColor = Color.Black;
         private static readonly Color RegularBackgroundColor = Color.Transparent;
+        private static readonly Color MissingBackgroundColor = Color.Yellow;
         private const int RegularRowHeight = 15;
 
         public static void ActivateLicense() => ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
@@ -43,17 +44,32 @@ namespace ToolListPrinterLibrary.DataProcessing
             ExcelPackage package = new();
             foreach (WorksheetModel worksheetModel in requiredWorksheets)
             {
-                ExcelWorksheet worksheet = package.Workbook.Worksheets.Add($"Arkusz {currSheet}");
+                worksheetModel.Name = $"Arkusz {currSheet}";
+                ExcelWorksheet worksheet = package.Workbook.Worksheets.Add(worksheetModel.Name);
                 // Add header
-                using (ExcelRange range = worksheet.Cells[currRow, 1, currRow, 3])
+                using (ExcelRange range = worksheet.Cells[currRow, 1, currRow, 2])
                 {
                     AddTitleCells(model, range);
+                }
+                currRow++;
+                using (ExcelRange range = worksheet.Cells[currRow, 1, currRow + 1, 1])
+                {
+                    AddExplicationKeyCell(range);
+                }
+                using (ExcelRange range = worksheet.Cells[currRow, 2])
+                {
+                    AddMissingToolKeyCell(range);
+                }
+                currRow++;
+                using (ExcelRange range = worksheet.Cells[currRow, 2])
+                {
+                    AddPresentToolKeyCell(range);
                 }
                 currRow++;
                 foreach (ToolListModel list in worksheetModel.ToolLists)
                 {
                     // add subtitle
-                    using (ExcelRange range = worksheet.Cells[currRow, 1, currRow, 3])
+                    using (ExcelRange range = worksheet.Cells[currRow, 1, currRow, 2])
                     {
                         AddSubTitleCells(list, range);
                     }
@@ -68,32 +84,31 @@ namespace ToolListPrinterLibrary.DataProcessing
                         {
                             AddRegularDescriptionCell(position, range);
                         }
-                        using (ExcelRange range = worksheet.Cells[currRow, 3])
+                        if (!position.IsPresent)
                         {
-                            AddRegularOrderCodeCell(position, range);
+                            using ExcelRange range = worksheet.Cells[currRow, 1, currRow, 2];
+                            range.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                            range.Style.Fill.BackgroundColor.SetColor(MissingBackgroundColor);
                         }
                         currRow++;
                     }
                 }
                 // apply styles to whole sheet
-                using (ExcelRange range = worksheet.Cells[1, 1, currRow, 3])
+                using (ExcelRange range = worksheet.Cells[1, 1, currRow, 2])
                 {
                     ApplyGlobalStyles(range);
                 }
                 // border applying
                 for (int i = 1; i < currRow; i++)
                 {
-                    for (int j = 1; j <= 3; j++)
+                    for (int j = 1; j <= 2; j++)
                     {
                         ExcelRange range = worksheet.Cells[i, j];
                         range.Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Thin, Color.Black);
                     }
                 }
-                worksheet.Columns[1].Width = 15;
-                worksheet.Columns[2].Width = 50;
-                worksheet.Columns[3].Width = 30;
                 double totalWidth = 0;
-                for (int i = 1; i <= 3; i++)
+                for (int i = 1; i <= 2; i++)
                 {
                     totalWidth += worksheet.Columns[i].Width;
                 }
@@ -102,12 +117,63 @@ namespace ToolListPrinterLibrary.DataProcessing
                     double widthDiff = totalWidth - MaxA4PageWidth;
                     worksheet.Columns[2].Width -= widthDiff;
                 }
+                else
+                {
+                    double widthDiff = MaxA4PageWidth - totalWidth;
+                    worksheet.Columns[2].Width += widthDiff;
+                }
                 currRow = 1;
                 currSheet++;
             }
             // save file
+            FileInfo fileInfo = new(filePath);
+            if (!fileInfo.Directory.Exists)
+            {
+                fileInfo.Directory.Create();
+            }
             package.SaveAs(new FileInfo(filePath));
             return filePath;
+        }
+
+        private static void AddPresentToolKeyCell(ExcelRange range)
+        {
+            range.Merge = true;
+            range.Value = "Narzędzia w maszynie";
+            // Apply header styles
+            range.Style.Font.Name = "Calibri";
+            range.Style.Font.Size = RegularFontSize;
+            range.Style.Font.Color.SetColor(RegularFontColor);
+            range.Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
+            range.Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Left;
+            range.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+            range.Style.Fill.BackgroundColor.SetColor(RegularBackgroundColor);
+        }
+
+        private static void AddMissingToolKeyCell(ExcelRange range)
+        {
+            range.Value = "Narzędzia w skrzyni";
+            // Apply header styles
+            range.Style.Font.Name = "Calibri";
+            range.Style.Font.Size = RegularFontSize;
+            range.Style.Font.Color.SetColor(RegularFontColor);
+            range.Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
+            range.Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Left;
+            range.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+            range.Style.Fill.BackgroundColor.SetColor(MissingBackgroundColor);
+        }
+
+        private static void AddExplicationKeyCell(ExcelRange range)
+        {
+            range.Value = "Legenda:";
+            // Apply header styles
+            range.Style.Font.Name = "Calibri";
+            range.Style.Font.Size = RegularFontSize;
+            range.Style.Font.Color.SetColor(RegularFontColor);
+            range.Style.Font.Bold = true;
+            range.Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
+            range.Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Left;
+            range.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+            range.Style.Fill.BackgroundColor.SetColor(RegularBackgroundColor);
         }
 
         private static void ApplyGlobalStyles(ExcelRange range) => range.AutoFitColumns();
@@ -119,8 +185,8 @@ namespace ToolListPrinterLibrary.DataProcessing
             range.Style.Font.Name = "Calibri";
             range.Style.Font.Size = RegularFontSize;
             range.Style.Font.Color.SetColor(RegularFontColor);
-            range.Style.Font.VerticalAlign = OfficeOpenXml.Style.ExcelVerticalAlignmentFont.Baseline;
-            range.Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+            range.Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
+            range.Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Left;
             range.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
             range.Style.Fill.BackgroundColor.SetColor(RegularBackgroundColor);
         }
@@ -134,13 +200,13 @@ namespace ToolListPrinterLibrary.DataProcessing
         private static void AddSubTitleCells(ToolListModel list, ExcelRange range)
         {
             range.Merge = true;
-            range.Value = "Mocowanie " + list.Clamping;
+            range.Value = "Mocowanie " + list.Clamping + $" - {list.MachineName}";
             // Apply header styles
             range.Style.Font.Name = "Calibri";
             range.Style.Font.Size = SubTitleFontSize;
             range.Style.Font.Color.SetColor(SubTitleFontColor);
             range.Style.Font.Bold = true;
-            range.Style.Font.VerticalAlign = OfficeOpenXml.Style.ExcelVerticalAlignmentFont.Baseline;
+            range.Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
             range.Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
             range.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
             range.Style.Fill.BackgroundColor.SetColor(SubTitleBackgroundColor);
@@ -149,13 +215,13 @@ namespace ToolListPrinterLibrary.DataProcessing
         private static void AddTitleCells(PartModel model, ExcelRange range)
         {
             range.Merge = true;
-            range.Value = model.PartName;
+            range.Value = "Lista narzędzi do zlecenia " + model.PartName;
             // Apply header styles
             range.Style.Font.Name = "Calibri";
             range.Style.Font.Size = TitleFontSize;
             range.Style.Font.Color.SetColor(TitleFontColor);
             range.Style.Font.Bold = true;
-            range.Style.Font.VerticalAlign = OfficeOpenXml.Style.ExcelVerticalAlignmentFont.Baseline;
+            range.Style.VerticalAlignment = OfficeOpenXml.Style.ExcelVerticalAlignment.Center;
             range.Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
             range.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
             range.Style.Fill.BackgroundColor.SetColor(TitleBackgroundColor);
@@ -164,7 +230,7 @@ namespace ToolListPrinterLibrary.DataProcessing
         private static List<WorksheetModel> CalculateRequiredWorksheets(PartModel model)
         {
             List<WorksheetModel> requiredWorksheets = new() { new() { ToolLists = new() } };
-            int currHeight = TitleRowHeight;
+            int currHeight = TitleRowHeight + (2 * RegularRowHeight);
             // calculate height of each clamping
             foreach (ToolListModel list in model.ToolLists)
             {
@@ -195,8 +261,9 @@ namespace ToolListPrinterLibrary.DataProcessing
         public static void OpenFileInExcel(string filePath)
         {
             Application excel = new();
-            excel.Visible = true;
             Workbook workbook = excel.Workbooks.Open(filePath);
+            workbook.Worksheets.Select();
+            excel.Visible = true;
         }
     }
 }

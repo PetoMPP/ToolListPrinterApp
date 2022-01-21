@@ -8,6 +8,7 @@ namespace ToolListPrinterLibrary.Models
 {
     public class WorksheetModel
     {
+        public string Name { get; set; }
         public List<ToolListModel> ToolLists { get; set; }
     }
 }
