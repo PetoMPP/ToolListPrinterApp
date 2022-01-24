@@ -36,9 +36,24 @@ namespace ToolListPrinterUI
                 MessageBox.Show($"Nie znaleziono list narzędziowych dla programu {model.PartName}!", "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            string filePath = ExcelProcessing.CreateExcelFileFromModel(model);
+            string filePath;
+            switch (ignoreMissingCheckBox.Checked)
+            {
+                case true:
+                    filePath = ExcelProcessing.CreateExcelFileFromModel(model, ignoreMissing: true);
+                    break;
+                case false:
+                    filePath = ExcelProcessing.CreateExcelFileFromModel(model);
+                    break;
+            }
             // Open file
             ExcelProcessing.OpenFileInExcel(filePath);
+        }
+
+        private void AdvancedModeLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            new AdvancedMode(this).Show();
+            Hide();
         }
     }
 }

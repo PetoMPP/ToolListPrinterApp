@@ -31,7 +31,7 @@ namespace ToolListPrinterLibrary.DataProcessing
         private const int RegularRowHeight = 15;
 
         public static void ActivateLicense() => ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-        public static string CreateExcelFileFromModel(PartModel model)
+        public static string CreateExcelFileFromModel(PartModel model, bool ignoreMissing = false)
         {
             // counters
             int currRow = 1;
@@ -74,23 +74,23 @@ namespace ToolListPrinterLibrary.DataProcessing
                         AddSubTitleCells(list, range);
                     }
                     currRow++;
-                    foreach (ListPositionModel position in list.ListPositions)
+                    switch (ignoreMissing)
                     {
-                        using (ExcelRange range = worksheet.Cells[currRow, 1])
-                        {
-                            AddRegularNameCell(position, range);
-                        }
-                        using (ExcelRange range = worksheet.Cells[currRow, 2])
-                        {
-                            AddRegularDescriptionCell(position, range);
-                        }
-                        if (!position.IsPresent)
-                        {
-                            using ExcelRange range = worksheet.Cells[currRow, 1, currRow, 2];
-                            range.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-                            range.Style.Fill.BackgroundColor.SetColor(MissingBackgroundColor);
-                        }
-                        currRow++;
+                        case true:
+                            foreach (ListPositionModel position in list.ListPositions)
+                            {
+                                AddPositionCell(currRow, worksheet, position);
+                                currRow++;
+                            }
+                            break;
+                        case false:
+                            foreach (ListPositionModel position in list.ListPositions)
+                            {
+                                AddPositionCell(currRow, worksheet, position);
+                                MarkMissingPositions(currRow, worksheet, position);
+                                currRow++;
+                            }
+                            break;
                     }
                 }
                 // apply styles to whole sheet
@@ -133,6 +133,28 @@ namespace ToolListPrinterLibrary.DataProcessing
             }
             package.SaveAs(new FileInfo(filePath));
             return filePath;
+        }
+
+        private static void MarkMissingPositions(int currRow, ExcelWorksheet worksheet, ListPositionModel position)
+        {
+            if (!position.IsPresent)
+            {
+                using ExcelRange range = worksheet.Cells[currRow, 1, currRow, 2];
+                range.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                range.Style.Fill.BackgroundColor.SetColor(MissingBackgroundColor);
+            }
+        }
+
+        private static void AddPositionCell(int currRow, ExcelWorksheet worksheet, ListPositionModel position)
+        {
+            using (ExcelRange range = worksheet.Cells[currRow, 1])
+            {
+                AddRegularNameCell(position, range);
+            }
+            using (ExcelRange range = worksheet.Cells[currRow, 2])
+            {
+                AddRegularDescriptionCell(position, range);
+            }
         }
 
         private static void AddPresentToolKeyCell(ExcelRange range)

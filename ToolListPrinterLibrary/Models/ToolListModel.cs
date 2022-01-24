@@ -41,6 +41,11 @@ namespace ToolListPrinterLibrary.Models
             }
 }
         private readonly Dictionary<string, string> MachineKeyPairs;
+        public string DisplayName { get
+            {
+                return ToolListName + " - " + MachineId;
+            }
+}
         public ToolListModel()
         {
             MachineKeyPairs = new();

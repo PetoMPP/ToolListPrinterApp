@@ -33,6 +33,8 @@ namespace ToolListPrinterUI
             this.partNumberTextBox = new System.Windows.Forms.TextBox();
             this.enterPartNumberLabel = new System.Windows.Forms.Label();
             this.createAndOpenFileButton = new System.Windows.Forms.Button();
+            this.ignoreMissingCheckBox = new System.Windows.Forms.CheckBox();
+            this.advancedModeLinkLabel = new System.Windows.Forms.LinkLabel();
             this.SuspendLayout();
             // 
             // programLabel
@@ -77,7 +79,7 @@ namespace ToolListPrinterUI
             this.createAndOpenFileButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.createAndOpenFileButton.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.createAndOpenFileButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(1)))), ((int)(((byte)(112)))), ((int)(((byte)(184)))));
-            this.createAndOpenFileButton.Location = new System.Drawing.Point(98, 170);
+            this.createAndOpenFileButton.Location = new System.Drawing.Point(98, 201);
             this.createAndOpenFileButton.Name = "createAndOpenFileButton";
             this.createAndOpenFileButton.Size = new System.Drawing.Size(188, 93);
             this.createAndOpenFileButton.TabIndex = 8;
@@ -85,12 +87,35 @@ namespace ToolListPrinterUI
             this.createAndOpenFileButton.UseVisualStyleBackColor = true;
             this.createAndOpenFileButton.Click += new System.EventHandler(this.CreateAndOpenFileButton_Click);
             // 
+            // ignoreMissingCheckBox
+            // 
+            this.ignoreMissingCheckBox.AutoSize = true;
+            this.ignoreMissingCheckBox.Location = new System.Drawing.Point(69, 173);
+            this.ignoreMissingCheckBox.Name = "ignoreMissingCheckBox";
+            this.ignoreMissingCheckBox.Size = new System.Drawing.Size(170, 19);
+            this.ignoreMissingCheckBox.TabIndex = 9;
+            this.ignoreMissingCheckBox.Text = "Ignoruj brakujące narzędzia";
+            this.ignoreMissingCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // advancedModeLinkLabel
+            // 
+            this.advancedModeLinkLabel.AutoSize = true;
+            this.advancedModeLinkLabel.Location = new System.Drawing.Point(200, 337);
+            this.advancedModeLinkLabel.Name = "advancedModeLinkLabel";
+            this.advancedModeLinkLabel.Size = new System.Drawing.Size(172, 15);
+            this.advancedModeLinkLabel.TabIndex = 10;
+            this.advancedModeLinkLabel.TabStop = true;
+            this.advancedModeLinkLabel.Text = "Idź do trybu zaawansowanego..";
+            this.advancedModeLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.AdvancedModeLinkLabel_LinkClicked);
+            // 
             // Dashboard
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(384, 361);
+            this.Controls.Add(this.advancedModeLinkLabel);
+            this.Controls.Add(this.ignoreMissingCheckBox);
             this.Controls.Add(this.createAndOpenFileButton);
             this.Controls.Add(this.enterPartNumberLabel);
             this.Controls.Add(this.partNumberTextBox);
@@ -108,6 +133,8 @@ namespace ToolListPrinterUI
         private System.Windows.Forms.TextBox partNumberTextBox;
         private System.Windows.Forms.Label enterPartNumberLabel;
         private System.Windows.Forms.Button createAndOpenFileButton;
+        private System.Windows.Forms.CheckBox ignoreMissingCheckBox;
+        private System.Windows.Forms.LinkLabel advancedModeLinkLabel;
     }
 }
 
