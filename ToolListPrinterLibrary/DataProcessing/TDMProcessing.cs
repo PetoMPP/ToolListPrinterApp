@@ -69,5 +69,44 @@ SELECT 0",
             return model;
         }
 
+        public static List<ToolListModel> OverrideByPresettingList(List<ToolListModel> toolLists)
+        {
+            using IDbConnection connection = GetTDMConnection();
+            // get tools to be marked as missing
+            string[] toolIds = Array.Empty<string>();
+            // get commision id by first listid
+            string commissionId = connection.Query<string>($"SELECT COMMISSIONID FROM CIR_ORDER WHERE LISTID = '{toolLists[0].ToolListId}'", commandType: CommandType.Text).FirstOrDefault();
+            // get tool list in commision
+            toolIds = connection.Query<string>($"SELECT ID FROM CIR_SHOPTOOLORDER WHERE COMMISSIONID = '{commissionId}'").ToArray();
+            // ovverride IsPresent param in every list position
+            foreach (ToolListModel tl in toolLists)
+            {
+                foreach (ListPositionModel lp in tl.ListPositions)
+                {
+                    lp.IsPresent = !toolIds.Any(id => id == lp.ToolId || id == lp.CompId);
+                }
+            }
+            return toolLists;
+        }
+
+        public static List<ToolListModel> OverrideByAssemblyList(List<ToolListModel> toolLists)
+        {
+            using IDbConnection connection = GetTDMConnection();
+            // get tools to be marked as missing
+            string[] toolIds = Array.Empty<string>();
+            // get commision id by first listid
+            string commissionId = connection.Query<string>($"SELECT COMMISSIONID FROM CIR_ORDER WHERE LISTID = '{toolLists[0].ToolListId}'", commandType: CommandType.Text).FirstOrDefault();
+            // get tool list in commision
+            toolIds = connection.Query<string>($"SELECT ID FROM TPS_COMMISSIONLIST WHERE COMMISSIONID = '{commissionId}'").ToArray();
+            // ovverride IsPresent param in every list position
+            foreach (ToolListModel tl in toolLists)
+            {
+                foreach (ListPositionModel lp in tl.ListPositions)
+                {
+                    lp.IsPresent = !toolIds.Any(id => id == lp.ToolId || id == lp.CompId);
+                }
+            }
+            return toolLists;
+        }
     }
 }

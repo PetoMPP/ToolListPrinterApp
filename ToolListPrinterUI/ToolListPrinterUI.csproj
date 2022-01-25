@@ -4,10 +4,21 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net5.0-windows</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
+    <ApplicationIcon>16585722151595156049-512.ico</ApplicationIcon>
+    <StartupObject>ToolListPrinterUI.Program</StartupObject>
+    <Win32Resource />
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="16585722151595156049-512.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\ToolListPrinterLibrary\ToolListPrinterLibrary.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="16585722151595156049-512.ico" />
   </ItemGroup>
 
 </Project>

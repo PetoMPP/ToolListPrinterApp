@@ -188,6 +188,7 @@ namespace ToolListPrinterLibrary.DataProcessing
         {
             range.Value = "Legenda:";
             // Apply header styles
+            range.Merge = true;
             range.Style.Font.Name = "Calibri";
             range.Style.Font.Size = RegularFontSize;
             range.Style.Font.Color.SetColor(RegularFontColor);

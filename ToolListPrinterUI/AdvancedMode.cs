@@ -42,7 +42,10 @@ namespace ToolListPrinterUI
         private void WireUpCheckedListBox()
         {
             toolListsListBox.Items.Clear();
-            toolListsListBox.Items.AddRange(_partModel.ToolLists.ToArray());
+            foreach (ToolListModel toolList in _partModel.ToolLists)
+            {
+                toolListsListBox.Items.Add(toolList, true);
+            }
             toolListsListBox.DisplayMember = "DisplayName";
         }
 
@@ -66,6 +69,16 @@ namespace ToolListPrinterUI
                     filePath = ExcelProcessing.CreateExcelFileFromModel(_partModel, ignoreMissing: true);
                     break;
                 case false:
+                    if (missingFromAssemblingCheckBox.Checked)
+                    {
+                        // override tools in lists by assembly list
+                        _partModel.ToolLists = TDMProcessing.OverrideByAssemblyList(_partModel.ToolLists);
+                    }
+                    if (missingFromPresettingCheckBox.Checked)
+                    {
+                        // override by presetting
+                        _partModel.ToolLists = TDMProcessing.OverrideByPresettingList(_partModel.ToolLists);
+                    }
                     filePath = ExcelProcessing.CreateExcelFileFromModel(_partModel);
                     break;
             }
@@ -76,6 +89,30 @@ namespace ToolListPrinterUI
         private void AdvancedMode_FormClosed(object sender, FormClosedEventArgs e)
         {
             _callingForm.Show();
+        }
+
+        private void ReturnButton_Click(object sender, EventArgs e) => Close();
+
+        private void MissingFromPresettingCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (missingFromPresettingCheckBox.Checked)
+            {
+                missingFromAssemblingCheckBox.Checked = false;
+                missingFromAssemblingCheckBox.Enabled = false;
+                return;
+            }
+            missingFromAssemblingCheckBox.Enabled = true;
+        }
+
+        private void MissingFromAssemblingCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (missingFromAssemblingCheckBox.Checked)
+            {
+                missingFromPresettingCheckBox.Checked = false;
+                missingFromPresettingCheckBox.Enabled = false;
+                return;
+            }
+            missingFromPresettingCheckBox.Enabled = true;
         }
     }
 }

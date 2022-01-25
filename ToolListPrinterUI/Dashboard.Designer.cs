@@ -29,6 +29,7 @@ namespace ToolListPrinterUI
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Dashboard));
             this.programLabel = new System.Windows.Forms.Label();
             this.partNumberTextBox = new System.Windows.Forms.TextBox();
             this.enterPartNumberLabel = new System.Windows.Forms.Label();
@@ -120,6 +121,7 @@ namespace ToolListPrinterUI
             this.Controls.Add(this.enterPartNumberLabel);
             this.Controls.Add(this.partNumberTextBox);
             this.Controls.Add(this.programLabel);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Dashboard";
             this.Text = "Tool List Printer";
             this.ResumeLayout(false);

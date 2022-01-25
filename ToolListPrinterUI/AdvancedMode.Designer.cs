@@ -29,6 +29,7 @@ namespace ToolListPrinterUI
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AdvancedMode));
             this.programLabel = new System.Windows.Forms.Label();
             this.enterPartNumberLabel = new System.Windows.Forms.Label();
             this.bottomPanel = new System.Windows.Forms.Panel();
@@ -41,6 +42,8 @@ namespace ToolListPrinterUI
             this.toolListsListBox = new System.Windows.Forms.CheckedListBox();
             this.selectToolListsLabel = new System.Windows.Forms.Label();
             this.rightPanel = new System.Windows.Forms.Panel();
+            this.missingFromAssemblingCheckBox = new System.Windows.Forms.CheckBox();
+            this.missingFromPresettingCheckBox = new System.Windows.Forms.CheckBox();
             this.ignoreMissingCheckBox = new System.Windows.Forms.CheckBox();
             this.optionsLabel = new System.Windows.Forms.Label();
             this.bottomPanel.SuspendLayout();
@@ -100,6 +103,7 @@ namespace ToolListPrinterUI
             this.returnButton.TabIndex = 10;
             this.returnButton.Text = "Powrót";
             this.returnButton.UseVisualStyleBackColor = true;
+            this.returnButton.Click += new System.EventHandler(this.ReturnButton_Click);
             // 
             // createAndOpenFileButton
             // 
@@ -195,6 +199,8 @@ namespace ToolListPrinterUI
             // 
             // rightPanel
             // 
+            this.rightPanel.Controls.Add(this.missingFromAssemblingCheckBox);
+            this.rightPanel.Controls.Add(this.missingFromPresettingCheckBox);
             this.rightPanel.Controls.Add(this.ignoreMissingCheckBox);
             this.rightPanel.Controls.Add(this.optionsLabel);
             this.rightPanel.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -202,6 +208,32 @@ namespace ToolListPrinterUI
             this.rightPanel.Name = "rightPanel";
             this.rightPanel.Size = new System.Drawing.Size(342, 259);
             this.rightPanel.TabIndex = 14;
+            // 
+            // missingFromAssemblingCheckBox
+            // 
+            this.missingFromAssemblingCheckBox.Dock = System.Windows.Forms.DockStyle.Top;
+            this.missingFromAssemblingCheckBox.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.missingFromAssemblingCheckBox.Location = new System.Drawing.Point(0, 122);
+            this.missingFromAssemblingCheckBox.Name = "missingFromAssemblingCheckBox";
+            this.missingFromAssemblingCheckBox.Padding = new System.Windows.Forms.Padding(15, 0, 0, 0);
+            this.missingFromAssemblingCheckBox.Size = new System.Drawing.Size(342, 58);
+            this.missingFromAssemblingCheckBox.TabIndex = 19;
+            this.missingFromAssemblingCheckBox.Text = "Pobierz brakujące narzędzia z Assembling";
+            this.missingFromAssemblingCheckBox.UseVisualStyleBackColor = true;
+            this.missingFromAssemblingCheckBox.CheckedChanged += new System.EventHandler(this.MissingFromAssemblingCheckBox_CheckedChanged);
+            // 
+            // missingFromPresettingCheckBox
+            // 
+            this.missingFromPresettingCheckBox.Dock = System.Windows.Forms.DockStyle.Top;
+            this.missingFromPresettingCheckBox.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.missingFromPresettingCheckBox.Location = new System.Drawing.Point(0, 64);
+            this.missingFromPresettingCheckBox.Name = "missingFromPresettingCheckBox";
+            this.missingFromPresettingCheckBox.Padding = new System.Windows.Forms.Padding(15, 0, 0, 0);
+            this.missingFromPresettingCheckBox.Size = new System.Drawing.Size(342, 58);
+            this.missingFromPresettingCheckBox.TabIndex = 18;
+            this.missingFromPresettingCheckBox.Text = "Pobierz brakujące narzędzia z Presettingu";
+            this.missingFromPresettingCheckBox.UseVisualStyleBackColor = true;
+            this.missingFromPresettingCheckBox.CheckedChanged += new System.EventHandler(this.MissingFromPresettingCheckBox_CheckedChanged);
             // 
             // ignoreMissingCheckBox
             // 
@@ -240,8 +272,9 @@ namespace ToolListPrinterUI
             this.Controls.Add(this.topPanel);
             this.Controls.Add(this.bottomPanel);
             this.Controls.Add(this.programLabel);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "AdvancedMode";
-            this.Text = "AdvancedMode";
+            this.Text = "Tool List Printer";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.AdvancedMode_FormClosed);
             this.bottomPanel.ResumeLayout(false);
             this.topPanel.ResumeLayout(false);
@@ -269,5 +302,7 @@ namespace ToolListPrinterUI
         private System.Windows.Forms.Label optionsLabel;
         private System.Windows.Forms.Button createAndOpenFileButton;
         private System.Windows.Forms.Button returnButton;
+        private System.Windows.Forms.CheckBox missingFromAssemblingCheckBox;
+        private System.Windows.Forms.CheckBox missingFromPresettingCheckBox;
     }
 }
