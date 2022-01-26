@@ -58,6 +58,7 @@ namespace ToolListPrinterUI
             this.partNumberTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.partNumberTextBox.Size = new System.Drawing.Size(247, 32);
             this.partNumberTextBox.TabIndex = 6;
+            this.partNumberTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.PartNumberTextBox_KeyDown);
             // 
             // enterPartNumberLabel
             // 

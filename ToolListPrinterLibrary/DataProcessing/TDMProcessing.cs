@@ -69,13 +69,21 @@ SELECT 0",
             return model;
         }
 
-        public static List<ToolListModel> OverrideByPresettingList(List<ToolListModel> toolLists)
+        public static List<ToolListModel> OverrideByAssemblingList(List<ToolListModel> toolLists)
         {
             using IDbConnection connection = GetTDMConnection();
             // get tools to be marked as missing
             string[] toolIds = Array.Empty<string>();
-            // get commision id by first listid
-            string commissionId = connection.Query<string>($"SELECT COMMISSIONID FROM CIR_ORDER WHERE LISTID = '{toolLists[0].ToolListId}'", commandType: CommandType.Text).FirstOrDefault();
+            // get commision id by listid
+            string commissionId = string.Empty; 
+            foreach(ToolListModel tl in toolLists)
+            {
+                commissionId = connection.Query<string>($"SELECT COMMISSIONID FROM CIR_ORDER WHERE LISTID = '{tl.ToolListId}'", commandType: CommandType.Text).FirstOrDefault();
+                if (!string.IsNullOrWhiteSpace(commissionId))
+                {
+                    break;
+                }
+            }
             // get tool list in commision
             toolIds = connection.Query<string>($"SELECT ID FROM CIR_SHOPTOOLORDER WHERE COMMISSIONID = '{commissionId}'").ToArray();
             // ovverride IsPresent param in every list position
@@ -89,13 +97,21 @@ SELECT 0",
             return toolLists;
         }
 
-        public static List<ToolListModel> OverrideByAssemblyList(List<ToolListModel> toolLists)
+        public static List<ToolListModel> OverrideByPresettingList(List<ToolListModel> toolLists)
         {
             using IDbConnection connection = GetTDMConnection();
             // get tools to be marked as missing
             string[] toolIds = Array.Empty<string>();
-            // get commision id by first listid
-            string commissionId = connection.Query<string>($"SELECT COMMISSIONID FROM CIR_ORDER WHERE LISTID = '{toolLists[0].ToolListId}'", commandType: CommandType.Text).FirstOrDefault();
+            // get commision id by listid
+            string commissionId = string.Empty;
+            foreach (ToolListModel tl in toolLists)
+            {
+                commissionId = connection.Query<string>($"SELECT COMMISSIONID FROM CIR_ORDER WHERE LISTID = '{tl.ToolListId}'", commandType: CommandType.Text).FirstOrDefault();
+                if (!string.IsNullOrWhiteSpace(commissionId))
+                {
+                    break;
+                }
+            }
             // get tool list in commision
             toolIds = connection.Query<string>($"SELECT ID FROM TPS_COMMISSIONLIST WHERE COMMISSIONID = '{commissionId}'").ToArray();
             // ovverride IsPresent param in every list position

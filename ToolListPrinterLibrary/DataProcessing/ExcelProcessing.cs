@@ -31,7 +31,7 @@ namespace ToolListPrinterLibrary.DataProcessing
         private const int RegularRowHeight = 15;
 
         public static void ActivateLicense() => ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-        public static string CreateExcelFileFromModel(PartModel model, bool ignoreMissing = false)
+        public static string CreateExcelFileFromModel(PartModel model, bool ignoreMissing = false, bool ignoreExplication = false)
         {
             // counters
             int currRow = 1;
@@ -39,7 +39,7 @@ namespace ToolListPrinterLibrary.DataProcessing
             // filepath
             string filePath = GetFilePath(model);
             // count needed worksheets 
-            List<WorksheetModel> requiredWorksheets = CalculateRequiredWorksheets(model);
+            List<WorksheetModel> requiredWorksheets = CalculateRequiredWorksheets(model, ignoreExplication);
             // create workbook
             ExcelPackage package = new();
             foreach (WorksheetModel worksheetModel in requiredWorksheets)
@@ -52,20 +52,23 @@ namespace ToolListPrinterLibrary.DataProcessing
                     AddTitleCells(model, range);
                 }
                 currRow++;
-                using (ExcelRange range = worksheet.Cells[currRow, 1, currRow + 1, 1])
+                if (!ignoreExplication)
                 {
-                    AddExplicationKeyCell(range);
+                    using (ExcelRange range = worksheet.Cells[currRow, 1, currRow + 1, 1])
+                    {
+                        AddExplicationKeyCell(range);
+                    }
+                    using (ExcelRange range = worksheet.Cells[currRow, 2])
+                    {
+                        AddMissingToolKeyCell(range);
+                    }
+                    currRow++;
+                    using (ExcelRange range = worksheet.Cells[currRow, 2])
+                    {
+                        AddPresentToolKeyCell(range);
+                    }
+                    currRow++; 
                 }
-                using (ExcelRange range = worksheet.Cells[currRow, 2])
-                {
-                    AddMissingToolKeyCell(range);
-                }
-                currRow++;
-                using (ExcelRange range = worksheet.Cells[currRow, 2])
-                {
-                    AddPresentToolKeyCell(range);
-                }
-                currRow++;
                 foreach (ToolListModel list in worksheetModel.ToolLists)
                 {
                     // add subtitle
@@ -250,10 +253,19 @@ namespace ToolListPrinterLibrary.DataProcessing
             range.Style.Fill.BackgroundColor.SetColor(TitleBackgroundColor);
         }
 
-        private static List<WorksheetModel> CalculateRequiredWorksheets(PartModel model)
+        private static List<WorksheetModel> CalculateRequiredWorksheets(PartModel model, bool ignoreExplication)
         {
             List<WorksheetModel> requiredWorksheets = new() { new() { ToolLists = new() } };
-            int currHeight = TitleRowHeight + (2 * RegularRowHeight);
+            int currHeight;
+            switch (ignoreExplication)
+            {
+                case true:
+                    currHeight = TitleRowHeight;
+                    break;
+                case false:
+                    currHeight = TitleRowHeight + (2 * RegularRowHeight);
+                    break;
+            }
             // calculate height of each clamping
             foreach (ToolListModel list in model.ToolLists)
             {

@@ -21,7 +21,9 @@ namespace ToolListPrinterUI
             InitializeComponent();
         }
 
-        private void CreateAndOpenFileButton_Click(object sender, EventArgs e)
+        private void CreateAndOpenFileButton_Click(object sender, EventArgs e) => CreateAndOpenFile();
+
+        private void CreateAndOpenFile()
         {
             // Create model
             if (string.IsNullOrWhiteSpace(partNumberTextBox.Text))
@@ -52,8 +54,16 @@ namespace ToolListPrinterUI
 
         private void AdvancedModeLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            new AdvancedMode(this).Show();
+            new AdvancedMode(this, partNumberTextBox.Text).Show();
             Hide();
+        }
+
+        private void PartNumberTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                CreateAndOpenFile();
+            }
         }
     }
 }

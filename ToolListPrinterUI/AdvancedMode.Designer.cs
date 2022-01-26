@@ -46,6 +46,7 @@ namespace ToolListPrinterUI
             this.missingFromPresettingCheckBox = new System.Windows.Forms.CheckBox();
             this.ignoreMissingCheckBox = new System.Windows.Forms.CheckBox();
             this.optionsLabel = new System.Windows.Forms.Label();
+            this.skipExplicationCheckBox = new System.Windows.Forms.CheckBox();
             this.bottomPanel.SuspendLayout();
             this.topPanel.SuspendLayout();
             this.leftPanel.SuspendLayout();
@@ -199,6 +200,7 @@ namespace ToolListPrinterUI
             // 
             // rightPanel
             // 
+            this.rightPanel.Controls.Add(this.skipExplicationCheckBox);
             this.rightPanel.Controls.Add(this.missingFromAssemblingCheckBox);
             this.rightPanel.Controls.Add(this.missingFromPresettingCheckBox);
             this.rightPanel.Controls.Add(this.ignoreMissingCheckBox);
@@ -261,6 +263,19 @@ namespace ToolListPrinterUI
             this.optionsLabel.Text = "Opcje:";
             this.optionsLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
+            // skipExplicationCheckBox
+            // 
+            this.skipExplicationCheckBox.AutoSize = true;
+            this.skipExplicationCheckBox.Dock = System.Windows.Forms.DockStyle.Top;
+            this.skipExplicationCheckBox.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.skipExplicationCheckBox.Location = new System.Drawing.Point(0, 180);
+            this.skipExplicationCheckBox.Name = "skipExplicationCheckBox";
+            this.skipExplicationCheckBox.Padding = new System.Windows.Forms.Padding(15, 0, 0, 0);
+            this.skipExplicationCheckBox.Size = new System.Drawing.Size(342, 29);
+            this.skipExplicationCheckBox.TabIndex = 20;
+            this.skipExplicationCheckBox.Text = "Nie twórz legendy";
+            this.skipExplicationCheckBox.UseVisualStyleBackColor = true;
+            // 
             // AdvancedMode
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -304,5 +319,6 @@ namespace ToolListPrinterUI
         private System.Windows.Forms.Button returnButton;
         private System.Windows.Forms.CheckBox missingFromAssemblingCheckBox;
         private System.Windows.Forms.CheckBox missingFromPresettingCheckBox;
+        private System.Windows.Forms.CheckBox skipExplicationCheckBox;
     }
 }

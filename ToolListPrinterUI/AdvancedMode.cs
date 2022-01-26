@@ -16,10 +16,11 @@ namespace ToolListPrinterUI
     {
         private PartModel _partModel;
         private readonly Form _callingForm;
-        public AdvancedMode(Form callingForm)
+        public AdvancedMode(Form callingForm, string partNumber)
         {
             _callingForm = callingForm;
             InitializeComponent();
+            partNumberTextBox.Text = partNumber;
         }
 
         private void LoadToolListsButton_Click(object sender, EventArgs e)
@@ -63,25 +64,22 @@ namespace ToolListPrinterUI
                 checkedToolLists.Add(toolList);
             }
             _partModel.ToolLists = checkedToolLists;
-            switch (ignoreMissingCheckBox.Checked)
+            bool ignoreMissing = ignoreMissingCheckBox.Checked;
+            bool ignoreExplication = skipExplicationCheckBox.Checked;
+            if (!ignoreMissing)
             {
-                case true:
-                    filePath = ExcelProcessing.CreateExcelFileFromModel(_partModel, ignoreMissing: true);
-                    break;
-                case false:
-                    if (missingFromAssemblingCheckBox.Checked)
-                    {
-                        // override tools in lists by assembly list
-                        _partModel.ToolLists = TDMProcessing.OverrideByAssemblyList(_partModel.ToolLists);
-                    }
-                    if (missingFromPresettingCheckBox.Checked)
-                    {
-                        // override by presetting
-                        _partModel.ToolLists = TDMProcessing.OverrideByPresettingList(_partModel.ToolLists);
-                    }
-                    filePath = ExcelProcessing.CreateExcelFileFromModel(_partModel);
-                    break;
+                if (missingFromAssemblingCheckBox.Checked)
+                {
+                    // override tools in lists by assembly list
+                    _partModel.ToolLists = TDMProcessing.OverrideByAssemblingList(_partModel.ToolLists);
+                }
+                if (missingFromPresettingCheckBox.Checked)
+                {
+                    // override by presetting
+                    _partModel.ToolLists = TDMProcessing.OverrideByPresettingList(_partModel.ToolLists);
+                } 
             }
+            filePath = ExcelProcessing.CreateExcelFileFromModel(_partModel, ignoreMissing, ignoreExplication);
             // Open file
             ExcelProcessing.OpenFileInExcel(filePath);
         }
@@ -113,6 +111,13 @@ namespace ToolListPrinterUI
                 return;
             }
             missingFromPresettingCheckBox.Enabled = true;
+        }
+
+        private void AdvancedMode_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            e.Cancel = true;
+            Visible = false;
+            _callingForm.Show();
         }
     }
 }
